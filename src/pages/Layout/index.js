@@ -2,6 +2,9 @@ import { Layout, Menu, Popconfirm } from 'antd'
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { HomeOutlined, DiffOutlined, EditOutlined, LogoutOutlined } from '@ant-design/icons'
 import './index.scss'
+import { useStore } from '@/store'
+import { useEffect } from 'react'
+import { observer } from 'mobx-react-lite'
 
 const { Header, Sider } = Layout
 
@@ -9,7 +12,13 @@ const GeekLayout = () => {
     const navigate = useNavigate()
     // const location = useLocation()
     // console.log(location)
+    // 获取当前激活的path路径
     const { pathname } = useLocation()
+    const { userStore, loginStore } = useStore()
+    // userStore.getUserInfo()
+    useEffect(() => {
+        userStore.getUserInfo()
+    }, [userStore])
 
     const highlight = () => {
         if (pathname === '/') {
@@ -20,14 +29,26 @@ const GeekLayout = () => {
             return ['3']
         }
     }
+
+    // 确认退出
+    const onConfirm = () => {
+        // 退出登录, 删除token, 跳回到登录界面
+        loginStore.clearToken()
+        navigate('/login')
+    }
+
     return (
         <Layout>
             <Header className='header'>
                 <div className='logo' />
                 <div className='user-info'>
-                    <span className='user-name'>user.name</span>
+                    <span className='user-name'>{userStore.userInfo.name}</span>
                     <span className='user-logout'>
-                        <Popconfirm title='是否确认退出?' okText='退出' cancelText='取消'>
+                        <Popconfirm
+                            onConfirm={onConfirm}
+                            title='是否确认退出?'
+                            okText='退出'
+                            cancelText='取消'>
                             <LogoutOutlined /> 退出
                         </Popconfirm>
                     </span>
@@ -84,4 +105,4 @@ const GeekLayout = () => {
     )
 }
 
-export default GeekLayout
+export default observer(GeekLayout)
