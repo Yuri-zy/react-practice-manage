@@ -1,5 +1,5 @@
 import { Layout, Menu, Popconfirm } from 'antd'
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
+import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { HomeOutlined, DiffOutlined, EditOutlined, LogoutOutlined } from '@ant-design/icons'
 import './index.scss'
 import { useStore } from '@/store'
@@ -14,11 +14,12 @@ const GeekLayout = () => {
     // console.log(location)
     // 获取当前激活的path路径
     const { pathname } = useLocation()
-    const { userStore, loginStore } = useStore()
+    const { userStore, loginStore, channelStore } = useStore()
     // userStore.getUserInfo()
     useEffect(() => {
         userStore.getUserInfo()
-    }, [userStore])
+        channelStore.loadChannelList()
+    }, [userStore, channelStore])
 
     const highlight = () => {
         if (pathname === '/') {

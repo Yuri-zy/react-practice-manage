@@ -7,23 +7,28 @@ import img404 from '@/assets/error.png'
 import './index.scss'
 import { useEffect, useState } from "react"
 import { http } from "@/utils"
+import { useStore } from "@/store"
+import { observer } from "mobx-react-lite"
 
 const { Option } = Select
 const { RangePicker } = DatePicker
 
 const Article = () => {
-    // 频道列表管理
-    const [channelList, setChannelList] = useState([])
+    // 在channel.Store.js 中重构了
+    // // 频道列表管理
+    // const [channelList, setChannelList] = useState([])
 
-    // useEffect的依赖项非常必要，不注意容易出现循环执行
-    // 在里面写会引起组件重新渲染的逻辑，重新渲染会导致useEffect再次执行
-    useEffect(() => {
-        const loadChannelList = async () => {
-            const res = await http.get('/channels')
-            setChannelList(res.data.channels)
-        }
-        loadChannelList()
-    }, [])
+    // // useEffect的依赖项非常必要，不注意容易出现循环执行
+    // // 在里面写会引起组件重新渲染的逻辑，重新渲染会导致useEffect再次执行
+    // useEffect(() => {
+    //     const loadChannelList = async () => {
+    //         const res = await http.get('/channels')
+    //         setChannelList(res.data.channels)
+    //     }
+    //     loadChannelList()
+    // }, [])
+
+    const { channelStore } = useStore()
 
     // 文章列表管理 统一管理数据
     const [articleData, setArticleData] = useState({
@@ -202,7 +207,7 @@ const Article = () => {
                             placeholder='请选择文章频道'
                             style={{ width: 120 }}
                         >
-                            {channelList.map(channel => <Option key={channel.id} value={channel.id}>{channel.name}</Option>)}
+                            {channelStore.channelList.map(channel => <Option key={channel.id} value={channel.id}>{channel.name}</Option>)}
 
                         </Select>
                     </Form.Item>
@@ -234,4 +239,4 @@ const Article = () => {
     )
 }
 
-export default Article
+export default observer(Article)
